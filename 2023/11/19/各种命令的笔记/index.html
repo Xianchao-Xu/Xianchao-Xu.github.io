@@ -20,17 +20,21 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="分享有限元理论和编程实现相关内容">
-<meta property="og:type" content="website">
-<meta property="og:title" content="悬臂梁的博客">
-<meta property="og:url" content="http://example.com/tags/OCC/index.html">
+  <meta name="description" content="Linux解压缩zip格式： 1unzip filename.zip  tar格式： 1tar -xvf filename.tar.xxx  # 其中，xxx是gz、bz2、xz、z等后缀（1.15版之后可自动识别压缩格式）  磁盘查看磁盘空间： 1df -hl  Linux子系统（WSL）移除子系统中的Windows环境变量（仅当次起效）: 1PATH&#x3D;$(echo &quot;$PATH&amp;qu">
+<meta property="og:type" content="article">
+<meta property="og:title" content="各种命令的笔记">
+<meta property="og:url" content="http://example.com/2023/11/19/%E5%90%84%E7%A7%8D%E5%91%BD%E4%BB%A4%E7%9A%84%E7%AC%94%E8%AE%B0/index.html">
 <meta property="og:site_name" content="悬臂梁的博客">
-<meta property="og:description" content="分享有限元理论和编程实现相关内容">
+<meta property="og:description" content="Linux解压缩zip格式： 1unzip filename.zip  tar格式： 1tar -xvf filename.tar.xxx  # 其中，xxx是gz、bz2、xz、z等后缀（1.15版之后可自动识别压缩格式）  磁盘查看磁盘空间： 1df -hl  Linux子系统（WSL）移除子系统中的Windows环境变量（仅当次起效）: 1PATH&#x3D;$(echo &quot;$PATH&amp;qu">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-11-19T20:14:04.000Z">
+<meta property="article:modified_time" content="2023-11-19T12:44:19.569Z">
 <meta property="article:author" content="xuxc">
+<meta property="article:tag" content="命令行">
+<meta property="article:tag" content="命令">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://example.com/tags/OCC/">
+<link rel="canonical" href="http://example.com/2023/11/19/%E5%90%84%E7%A7%8D%E5%91%BD%E4%BB%A4%E7%9A%84%E7%AC%94%E8%AE%B0/">
 
 
 <script id="page-configurations">
@@ -38,12 +42,12 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : false,
+    isPost : true,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>标签: OCC | 悬臂梁的博客</title>
+  <title>各种命令的笔记 | 悬臂梁的博客</title>
   
 
 
@@ -185,51 +189,100 @@
         <div class="content-wrap">
           
 
-          <div class="content tag">
+          <div class="content post posts-expand">
             
 
+    
   
   
-  
-  <div class="post-block">
-    <div class="posts-collapse">
-      <div class="collection-title">
-        <h2 class="collection-header">OCC
-          <small>标签</small>
-        </h2>
-      </div>
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/11/19/%E5%90%84%E7%A7%8D%E5%91%BD%E4%BB%A4%E7%9A%84%E7%AC%94%E8%AE%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/logo.png">
+      <meta itemprop="name" content="xuxc">
+      <meta itemprop="description" content="分享有限元理论和编程实现相关内容">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="悬臂梁的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          各种命令的笔记
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-11-19 20:14:04 / 修改时间：12:44:19" itemprop="dateCreated datePublished" datetime="2023-11-19T20:14:04+00:00">2023-11-19</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%85%B6%E5%AE%83/" itemprop="url" rel="index"><span itemprop="name">其它</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-    <div class="collection-year">
-      <span class="collection-header">2023</span>
+        <h2 id="Linux"><a href="#Linux" class="headerlink" title="Linux"></a>Linux</h2><h3 id="解压缩"><a href="#解压缩" class="headerlink" title="解压缩"></a>解压缩</h3><p>zip格式：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">unzip filename.zip</span><br></pre></td></tr></table></figure>
+
+<p>tar格式：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -xvf filename.tar.xxx  <span class="comment"># 其中，xxx是gz、bz2、xz、z等后缀（1.15版之后可自动识别压缩格式）</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="磁盘"><a href="#磁盘" class="headerlink" title="磁盘"></a>磁盘</h3><p>查看磁盘空间：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">df</span> -hl</span><br></pre></td></tr></table></figure>
+
+<h2 id="Linux子系统（WSL）"><a href="#Linux子系统（WSL）" class="headerlink" title="Linux子系统（WSL）"></a>Linux子系统（WSL）</h2><p>移除子系统中的Windows环境变量（仅当次起效）:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PATH=$(<span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$PATH</span>&quot;</span> | sed -e <span class="string">&#x27;s/:\/mnt.*//g&#x27;</span>) <span class="comment"># strip out problematic Windows %PATH% imported var</span></span><br></pre></td></tr></table></figure>
+
     </div>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+    
+    
+    
 
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2023-10-15T16:53:58+00:00"
-              content="2023-10-15">
-          10-15
-        </time>
-      </div>
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C/" rel="tag"># 命令行</a>
+              <a href="/tags/%E5%91%BD%E4%BB%A4/" rel="tag"># 命令</a>
+          </div>
 
-      <div class="post-title">
-          <a class="post-title-link" href="/2023/10/15/OCC-VTK%E6%98%BE%E7%A4%BACAD%E6%A8%A1%E5%9E%8B/" itemprop="url">
-            <span itemprop="name">OCC+VTK显示CAD模型</span>
-          </a>
-      </div>
+        
 
-    </header>
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/10/15/OCC-VTK%E6%98%BE%E7%A4%BACAD%E6%A8%A1%E5%9E%8B/" rel="prev" title="OCC+VTK显示CAD模型">
+      <i class="fa fa-chevron-left"></i> OCC+VTK显示CAD模型
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
   </article>
-
-    </div>
-  </div>
   
   
-  
-
   
 
 
@@ -282,6 +335,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux"><span class="nav-number">1.</span> <span class="nav-text">Linux</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E5%8E%8B%E7%BC%A9"><span class="nav-number">1.1.</span> <span class="nav-text">解压缩</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A3%81%E7%9B%98"><span class="nav-number">1.2.</span> <span class="nav-text">磁盘</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux%E5%AD%90%E7%B3%BB%E7%BB%9F%EF%BC%88WSL%EF%BC%89"><span class="nav-number">2.</span> <span class="nav-text">Linux子系统（WSL）</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

@@ -37,4 +37,27 @@
         <tag>可视化</tag>
       </tags>
   </entry>
+  <entry>
+    <title>各种命令的笔记</title>
+    <url>/2023/11/19/%E5%90%84%E7%A7%8D%E5%91%BD%E4%BB%A4%E7%9A%84%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<h2 id="Linux"><a href="#Linux" class="headerlink" title="Linux"></a>Linux</h2><h3 id="解压缩"><a href="#解压缩" class="headerlink" title="解压缩"></a>解压缩</h3><p>zip格式：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">unzip filename.zip</span><br></pre></td></tr></table></figure>
+
+<p>tar格式：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar -xvf filename.tar.xxx  <span class="comment"># 其中，xxx是gz、bz2、xz、z等后缀（1.15版之后可自动识别压缩格式）</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="磁盘"><a href="#磁盘" class="headerlink" title="磁盘"></a>磁盘</h3><p>查看磁盘空间：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">df</span> -hl</span><br></pre></td></tr></table></figure>
+
+<h2 id="Linux子系统（WSL）"><a href="#Linux子系统（WSL）" class="headerlink" title="Linux子系统（WSL）"></a>Linux子系统（WSL）</h2><p>移除子系统中的Windows环境变量（仅当次起效）:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">PATH=$(<span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$PATH</span>&quot;</span> | sed -e <span class="string">&#x27;s/:\/mnt.*//g&#x27;</span>) <span class="comment"># strip out problematic Windows %PATH% imported var</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>其它</category>
+      </categories>
+      <tags>
+        <tag>命令行</tag>
+        <tag>命令</tag>
+      </tags>
+  </entry>
 </search>
