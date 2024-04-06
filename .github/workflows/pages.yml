@@ -16,6 +16,11 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: "20"
+      - name: Install pandoc
+        run: |
+          cd /tmp
+          wget -c https://github.com/jgm/pandoc/releases/download/2.14.0.3/pandoc-2.14.0.3-1-amd64.deb
+          sudo dpkg -i pandoc-2.14.0.3-1-amd64.deb
       - name: Cache NPM dependencies
         uses: actions/cache@v2
         with:
