@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 6.3.0">
+<meta name="generator" content="Hexo 7.1.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -191,6 +191,272 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/04/06/%E7%89%B9%E5%BE%81%E9%97%AE%E9%A2%98%E7%9A%84%E8%A7%A3%E6%B3%95%E2%80%94%E2%80%94%E5%90%91%E9%87%8F%E8%BF%AD%E4%BB%A3%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/logo.png">
+      <meta itemprop="name" content="xuxc">
+      <meta itemprop="description" content="分享有限元理论和编程实现相关内容">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="悬臂梁的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/04/06/%E7%89%B9%E5%BE%81%E9%97%AE%E9%A2%98%E7%9A%84%E8%A7%A3%E6%B3%95%E2%80%94%E2%80%94%E5%90%91%E9%87%8F%E8%BF%AD%E4%BB%A3%E6%B3%95/" class="post-title-link" itemprop="url">特征问题的解法——向量迭代法（一）</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2024-04-06 18:55:11 / 修改时间：14:34:13" itemprop="dateCreated datePublished" datetime="2024-04-06T18:55:11+00:00">2024-04-06</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/2-%E6%95%B0%E5%80%BC%E8%AE%A1%E7%AE%97/" itemprop="url" rel="index"><span itemprop="name">2.数值计算</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/2-%E6%95%B0%E5%80%BC%E8%AE%A1%E7%AE%97/2-%E7%89%B9%E5%BE%81%E9%97%AE%E9%A2%98%E7%9A%84%E8%A7%A3%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">2.特征问题的解法</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="前言">前言</h2>
+<p>在工程中，我们经常需要对模型进行模态分析，以确定模型的模态频率和振型。</p>
+<p>模态分析本质上是求解特征值问题 <span class="math display">\[
+{\rm K \phi} = \lambda {\rm M \phi} \tag{1}
+\]</span> 特别是求解最小特征值 <span class="math inline">\(\lambda_1, \dots, \lambda_p\)</span> 及其特征向量 <span class="math inline">\(\phi_1, \dots, \phi_p\)</span> 。</p>
+<p>常用的特征值求解算法可分为四类，对应于求解算法利用的基本性质。</p>
+<p>第一类是向量迭代法(Vector Iteration Method)，又称为幂法(Power Iteration Method)，利用的基本性质是 <span class="math display">\[
+{\rm K \phi_i} = \lambda_i{\rm M \phi_i} \tag{2}
+\]</span></p>
+<p>第二类为变换法，利用的基本性质是 <span class="math display">\[
+{\rm \Phi^T K \Phi} = {\rm \Lambda}  \tag{3}
+\]</span> <span class="math display">\[
+{\rm \Phi^T M \Phi} = {\rm I}  \tag{4}
+\]</span> 其中， <span class="math inline">\({\rm \Phi} = \left[ {\rm \phi_i, \dots, \phi_n} \right]\)</span> 和 <span class="math inline">\({\rm \Lambda} = {\rm diag(\lambda_i)}, i=1,\dots,n\)</span> 。</p>
+<p>第三类为多项式迭代法，利用的基本性质是 <span class="math display">\[
+p(\lambda_i) = 0 \tag{5}
+\]</span> 其中， <span class="math display">\[
+p(\lambda) = {\rm det(K - \lambda M)} \tag{6}
+\]</span></p>
+<p>第四类求解算法利用特征多项式的 Sturm 序列性质 <span class="math display">\[
+p(\lambda) = {\rm det(K - \lambda M)} \tag{7}
+\]</span> <span class="math display">\[
+p^{(r)}(\lambda^{(r)}) = {\rm det(K^{(r)} - \lambda^{(r)}M^{(r)})}; \quad r=1,\dots,n-1  \tag{8}
+\]</span> 其中， <span class="math inline">\(p^{(r)}(\lambda^{(r)})\)</span> 是对应于<span class="math inline">\({\rm K \phi = \lambda M \phi}\)</span> 的第 <span class="math inline">\(r\)</span> 个相伴约束问题的特征多项式。</p>
+<p>在四类求解方法中，每一类都提出了许多算法。</p>
+<p>在学习具体算法前，需要认识到，求解算法应具有迭代性质， 因为求解特征问题 <span class="math inline">\({\rm K \phi = \lambda M \phi}\)</span> 就等价于计算多项式 <span class="math inline">\(p(\lambda)\)</span> 的根，它的阶等于 <span class="math inline">\({\rm K}\)</span> 和 <span class="math inline">\({\rm M}\)</span> 的阶。</p>
+<p>接下来开始介绍第一类方法：向量迭代法。而在介绍向量迭代法之前，先尝试理解其基本思想。</p>
+<h2 id="基本思想">基本思想</h2>
+<p>假设向量 <span class="math inline">\({\rm A}\)</span> 有 <span class="math inline">\(n\)</span> 个线性无关的特征向量 <span class="math inline">\(\mathit{x_1, \dots, x_n}\)</span> ，且相应的特征值满足 <span class="math display">\[
+|\lambda_1| &gt; |\lambda_2| \geq \dots \geq |\lambda_n|
+\]</span></p>
+<p>给定一个任意向量 <span class="math inline">\(\mathit{v}_0\)</span> ，假设 <span class="math display">\[
+\mathit{v}_0 = \alpha_1 \mathit{x}_1 + \dots + \alpha_n \mathit{x}_n
+\]</span></p>
+<p>将 <span class="math inline">\({\rm A}\)</span> 作用于该向量，有 <span class="math display">\[
+\mathbf{A} \mathit{v}_0 = \alpha_1 \lambda_1 \mathit{x}_1 + \alpha_2 \lambda_2 \mathit{x}_2 + \dots + \alpha_n \lambda_n \mathit{x}_n \\
+\mathbf{A}^2 \mathit{v}_0 = \alpha_1 \lambda_1^2 \mathit{x}_1 + \alpha_2 \lambda_2^2 \mathit{x}_2 + \dots + \alpha_n \lambda_n^2 \mathit{x}_n
+\]</span></p>
+<p>且一般地， <span class="math display">\[
+\mathbf{A}^k \mathit{v}_0 = \alpha_1 \lambda_1^k \mathit{x}_1 + \alpha_2 \lambda_2^k \mathit{x}_2 + \dots + \alpha_n \lambda_n^k \mathit{x}_n  \tag{9}
+\]</span></p>
+<p>若定义 <span class="math display">\[
+\mathit{v}_k = \mathbf{A}^k \mathit{v}_0, \quad k=1, 2, \dots
+\]</span></p>
+<p>则 <span class="math display">\[
+\frac{1}{\lambda_1^k} \mathit{v}_k = \alpha_1 \mathit{x}_1 + \alpha_2 (\frac{\lambda_2}{\lambda_1})^k \mathit{x}_2 + \dots + \alpha_2 (\frac{\lambda_n}{\lambda_1})^k \mathit{x}_n \tag{10}
+\]</span></p>
+<p>由于 <span class="math display">\[
+\left| \frac{\lambda_i}{\lambda_1} \right| &lt; 1, \quad, i=2,3,\dots,n
+\]</span></p>
+<p>由此得到： <span class="math display">\[
+\frac{1}{\lambda_1^k} \mathit{v}_k \rightarrow \alpha_1 \mathit{x}_1, \quad k \rightarrow \infty
+\]</span></p>
+<p>因此，若 <span class="math inline">\(\alpha_1 \neq 0\)</span> ，则序列 <span class="math inline">\(\{ (1/\lambda_1^k) \mathit{v}_k \}\)</span> 收敛到 <span class="math inline">\(\mathbf{A}\)</span> 的特征向量 <span class="math inline">\(\alpha_1 \mathit{x}_1\)</span>。</p>
+<p>当然，由于 <span class="math inline">\(\lambda_1\)</span> 是未知的，所以无法计算 <span class="math inline">\(\{ (1/\lambda_1^k) \mathit{v}_k \}\)</span> 。 但好在不需要将序列 <span class="math inline">\(\{ \mathit{v}_k \}\)</span> 用 <span class="math inline">\(1/\lambda_1^k\)</span> 进行缩放。</p>
+<p>这就是正迭代法的思想，能计算出最大的特征值。</p>
+<p>而模态分析需要计算的是最小特征值，需要使用的是逆迭代法，即需要将 <span class="math inline">\(\mathbf{A}^{-1}\)</span> 作用在向量上。</p>
+<h2 id="向量迭代法">向量迭代法</h2>
+<p>向量迭代法所考虑的基本关系式是 <span class="math display">\[
+{\rm K \phi} = \lambda {\rm M \phi} \tag{1}
+\]</span></p>
+<p>选择 <span class="math inline">\(\phi\)</span> 的一个向量 <span class="math inline">\(\mathbf{x}_1\)</span> ，对 <span class="math inline">\(\lambda\)</span> 设定一个值，令 <span class="math inline">\(\lambda = 1\)</span> 。于是，可以计算公式 (1) 的右手边，即可以计算 <span class="math display">\[
+\mathbf{R}_1 = (1)\mathbf{M x_1} \tag{11)}
+\]</span></p>
+<h2 id="参考文献">参考文献</h2>
+<p>[1]. Bathe K J. Finite element procedures[M]. Klaus-Jurgen Bathe, 2006.</p>
+<p>[2]. 史蒂文・J.利昂著STEVENJ.LEON.线性代数[M].机械工业出版社,2015.</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/04/06/%E7%BA%BF%E6%80%A7%E6%96%B9%E7%A8%8B%E7%BB%84%E7%9A%84%E8%A7%A3%E6%B3%95%E2%80%94%E2%80%94Cholesky%E5%88%86%E8%A7%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/logo.png">
+      <meta itemprop="name" content="xuxc">
+      <meta itemprop="description" content="分享有限元理论和编程实现相关内容">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="悬臂梁的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/04/06/%E7%BA%BF%E6%80%A7%E6%96%B9%E7%A8%8B%E7%BB%84%E7%9A%84%E8%A7%A3%E6%B3%95%E2%80%94%E2%80%94Cholesky%E5%88%86%E8%A7%A3/" class="post-title-link" itemprop="url">线性方程组的解法——Cholesky分解</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2024-04-06 18:52:11 / 修改时间：14:34:13" itemprop="dateCreated datePublished" datetime="2024-04-06T18:52:11+00:00">2024-04-06</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/2-%E6%95%B0%E5%80%BC%E8%AE%A1%E7%AE%97/" itemprop="url" rel="index"><span itemprop="name">2.数值计算</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/2-%E6%95%B0%E5%80%BC%E8%AE%A1%E7%AE%97/1-%E7%BA%BF%E6%80%A7%E6%96%B9%E7%A8%8B%E7%BB%84%E7%9A%84%E8%A7%A3%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">1.线性方程组的解法</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="cholesky分解">Cholesky分解</h2>
+<p>在科学和工程计算中，经常需要求解形如 <span class="math inline">\(\mathbf{A} \mathit{x} = \mathit{b}\)</span> 的线性方程组， 其中 <span class="math inline">\(\mathbf{A}\)</span> 为 <span class="math inline">\(n \times m\)</span> 矩阵，称为系数矩阵， <span class="math inline">\(\mathit{b}\)</span> 为 <span class="math inline">\(n\)</span> 维列向量，称为右端向量， <span class="math inline">\(\mathit{x}\)</span> 为待求解的 <span class="math inline">\(m\)</span> 维列向量，称为解向量。</p>
+<p>而科学和工程的实际计算中，经常遇到系数矩阵 <span class="math inline">\(\mathbf{A}\)</span> 为对称正定矩阵的情况。若 <span class="math display">\[
+\mathbf{A}=\begin{bmatrix}
+    a_{11} \\ a_{21} &amp; a_{22}  &amp;  &amp; 对称\\
+    a_{31} &amp; a_{32} &amp; a_{33} \\
+    \vdots &amp; \vdots &amp; \vdots &amp; \ddots \\
+    a_{n1} &amp; a_{n2} &amp; \dots &amp; a_{nn}
+\end{bmatrix}
+\]</span> 为正定阵，则有如下三角阵 <span class="math display">\[
+\mathbf{L} = \begin{bmatrix}
+    l_{11} \\
+    l_{21} &amp; l_{22} &amp; &amp; \mathbf{0}\\
+    l_{31} &amp; l_{32} &amp; l_{33} \\
+    \vdots &amp; \vdots &amp; \vdots &amp; \ddots \\
+    l_{n1} &amp; l_{n2} &amp; l_{n3} &amp; \dots &amp; l_{nn}
+\end{bmatrix} \\
+\]</span> 使 <span class="math inline">\(\mathbf{A} = \mathbf{L \cdot L^T}\)</span> 成立。若 <span class="math inline">\(\mathbf{L}\)</span> 的主对角线元素取正值，则这种分解是唯一的。</p>
+<p>将矩阵关系式 <span class="math inline">\(\mathbf{A} = \mathbf{L \cdot L^T}\)</span> 直接展开，有 <span class="math display">\[
+\begin{align*}
+    a_{11} &amp;= l_{11}^{2} \\ 
+    a_{21} &amp;= l_{21}l_{11},\quad a_{22} = l_{21}^{2}+l_{22}^{2}\\ 
+    a_{31} &amp;= l_{31}l_{11},\quad a_{32} = l_{31}l_{21}+l_{32}l_{22},\quad a_{33}=l_{31}^{2}+l_{32}^{2}+l_{33}^{2}\\
+    \dots
+\end{align*}\\
+\]</span></p>
+<p>据此可逐行求出矩阵 <span class="math inline">\(\mathbf{L}\)</span> 的元素 <span class="math inline">\(l_{11} \rightarrow l_{21} \rightarrow l_{22} \rightarrow l_{31} \rightarrow l_{32} \rightarrow \dots\)</span>，计算公式为 <span class="math display">\[
+\begin{cases}
+    l_{ij} &amp;= (a_{ij} - \sum\limits_{k=1}^{j-1}l_{ik}l_{jk}) / l_{jj}, \quad &amp; j = 1, 2, \dots, i-1 \\
+    l_{ii} &amp;= (a_{ii} - \sum\limits_{k=1}^{i-1}l_{ik}^2)^\frac{1}{2}, \quad &amp; i = 1, 2, \dots, n \\ \end{cases} \\
+\]</span></p>
+<p>基于矩阵分解式 <span class="math inline">\(\mathbf{A} = \mathbf{L \cdot L^T}\)</span>，对称正定方程组 <span class="math inline">\(\mathbf{A} \mathit{x} = \mathit{b}\)</span> 可归结为两个三角方程组 <span class="math inline">\(\mathbf{L} \mathit{y} = \mathit{b}\)</span> 和 <span class="math inline">\(\mathbf{L}^T \mathit{x} = \mathit{y}\)</span> 来求解。</p>
+<p>由 <span class="math inline">\(\mathbf{L} \mathit{y} = \mathit{b}\)</span> 即 <span class="math display">\[
+\begin{cases} l_{11}y_{1} &amp;= b_1 \\ l_{21}y_{2} + l_{22}y_{2} &amp;= b_2 \\ \dots \dots \dots \\ l_{n1}y_{1} + l_{n2}y_{2} + \dots + l_{nn}y_{n} &amp;= b_n \end{cases} \\
+\]</span> 可顺序计算出 <span class="math inline">\(y_1 \rightarrow y_2 \rightarrow \dots \rightarrow y_n\)</span> ： <span class="math display">\[
+y_i = (b_i - \sum\limits_{k=1}^{i-1}l_{ik}y_{k})/l_{ii}, \quad i = 1, 2, \dots,n \\
+\]</span></p>
+<p>而由 <span class="math inline">\(\mathbf{L}^T \mathit{x} = \mathit{y}\)</span> 即 <span class="math display">\[
+\begin{cases}
+    \begin{alignat*}{2}
+    l_{11}x_1 + l_{21}x_2 + \dots + l_{n1}x_n &amp;= y_1 \\
+    l_{22}x_2 + \dots + l_{n2}x_n &amp;= y_2 \\
+    \dots \dots \dots \\
+    l_{nn}x_n &amp;= y_n \\
+    \end{alignat*}
+\end{cases} \\
+\]</span> 可逆序求得 <span class="math inline">\(x_n \rightarrow x_{n-1} \rightarrow \dots \rightarrow x_1\)</span>： <span class="math display">\[
+x_i = (y_i - \sum\limits_{k=i+1}^nl_{ki}x_{k})/l_{ii}, \quad i = n, n-1, \dots, 1 \\
+\]</span></p>
+<p>由于矩阵分解时公式含有开方运算，所以该算法称为平方根法，又叫Cholesky分解法。</p>
+<h2 id="代码实现fortran版">代码实现（Fortran版）</h2>
+<p>根据上述公式，编写程序即可对方程进行求解：</p>
+<figure class="highlight fortran"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">subroutine</span></span> cholesky_full(n, a, y)</span><br><span class="line">    <span class="keyword">implicit</span> <span class="keyword">none</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">integer</span>, <span class="keyword">intent</span>(<span class="keyword">in</span>) :: n</span><br><span class="line">    <span class="keyword">real</span>, <span class="keyword">intent</span>(inout) :: a(n, n), y(n)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">integer</span> :: i, j, k</span><br><span class="line">    <span class="keyword">real</span> :: temp</span><br><span class="line">    </span><br><span class="line">    <span class="comment">! 分解矩阵，生成下三角阵L</span></span><br><span class="line">    <span class="comment">! 工程问题中的很多矩阵非常庞大，所以，计算过程中的数据应该直接存放在原始数组a中，</span></span><br><span class="line">    <span class="comment">! 而不是新创建一个数组</span></span><br><span class="line">    <span class="keyword">do</span> i = <span class="number">1</span>, n</span><br><span class="line">        <span class="comment">! 公式中，j的取值范围为1到j-1，此处换成1到j，可以将分解式统一起来，省去一次判断。</span></span><br><span class="line">        <span class="comment">! 因为j=i时，j循环虽然会执行错误的操作、生成错误的a(i,j)结果，</span></span><br><span class="line">        <span class="comment">! 但a(i,j)马上就会被最外层的i循环生成的正确数据替换</span></span><br><span class="line">        <span class="keyword">do</span> j = <span class="number">1</span>, i</span><br><span class="line">            temp = a(i, j)</span><br><span class="line">            <span class="keyword">do</span> k = <span class="number">1</span>, j-<span class="number">1</span></span><br><span class="line">                temp = temp - a(i, k) * a(j, k)</span><br><span class="line">            <span class="keyword">end</span> <span class="keyword">do</span></span><br><span class="line">            a(i, j) = temp / a(j, j)</span><br><span class="line">            <span class="comment">! a(j, i) = 0.  ! 对角线上方d的元素赋0，可有可无</span></span><br><span class="line">        <span class="keyword">end</span> <span class="keyword">do</span></span><br><span class="line">        a(i, i) = <span class="built_in">sqrt</span>(temp)</span><br><span class="line">    <span class="keyword">end</span> <span class="keyword">do</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">! 根据Ly=b求解出y</span></span><br><span class="line">    <span class="keyword">do</span> i = <span class="number">1</span>, n</span><br><span class="line">        temp = y(i)</span><br><span class="line">        <span class="keyword">do</span> j = <span class="number">1</span>, i-<span class="number">1</span></span><br><span class="line">            temp = temp - a(i, j) * y(j)</span><br><span class="line">        <span class="keyword">end</span> <span class="keyword">do</span></span><br><span class="line">        y(i) = temp / a(i, i)</span><br><span class="line">    <span class="keyword">end</span> <span class="keyword">do</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">! 求解出x</span></span><br><span class="line">    <span class="keyword">do</span> i = n, <span class="number">1</span>, -<span class="number">1</span></span><br><span class="line">        temp = y(i) / a(i, i)</span><br><span class="line">        y(i) = temp</span><br><span class="line">        <span class="comment">! 公式中k的范围为i+1到n，此处为1到i-1，因为下方a(i,k)的下标和公式中交换了顺序</span></span><br><span class="line">        <span class="keyword">do</span> k = <span class="number">1</span>, i-<span class="number">1</span></span><br><span class="line">            y(k) = y(k) - temp * a(i, k)</span><br><span class="line">        <span class="keyword">end</span> <span class="keyword">do</span></span><br><span class="line">    <span class="keyword">end</span> <span class="keyword">do</span></span><br><span class="line"><span class="keyword">end</span> <span class="function"><span class="keyword">subroutine</span></span></span><br></pre></td></tr></table></figure>
+<p>以上代码的Cholesky分解部分与前文公式基本上一致，很好理解，但引入了一个临时变量temp，用于存储数据。 而如果我们将j、k两层循环交换一下位置，再稍微调整一下循环计数器的取值范围，就可以不借助临时变量直接完成分解操作。 代码如下： <figure class="highlight fortran"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">do</span> i = <span class="number">1</span>, n</span><br><span class="line">    <span class="keyword">do</span> k = <span class="number">1</span>, i - <span class="number">1</span></span><br><span class="line">        a(i, k) = a(i, k) / a(k, k)</span><br><span class="line">        <span class="keyword">do</span> j = k + <span class="number">1</span>, i</span><br><span class="line">            a(i, j) = a(i, j) - a(i, k) * a(j, k)</span><br><span class="line">        <span class="keyword">end</span> <span class="keyword">do</span></span><br><span class="line">    <span class="keyword">end</span> <span class="keyword">do</span></span><br><span class="line">    a(i, i) = <span class="built_in">sqrt</span>(a(i, i))</span><br><span class="line"><span class="keyword">end</span> <span class="keyword">do</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="参考文献">参考文献</h2>
+<p>[1].王能超. 高等学校教材, 数值分析简明教程, （第2版）[M]. 2003.</p>
+<p>[2].吴建平, 王正华, 李晓梅. 稀疏线性方程组的高效求解与并行计算[M]. 湖南科学技术出版社, 2004.</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2023/11/19/%E5%90%84%E7%A7%8D%E5%91%BD%E4%BB%A4%E7%9A%84%E7%AC%94%E8%AE%B0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -214,17 +480,23 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2023-11-19 20:14:04 / 修改时间：12:44:19" itemprop="dateCreated datePublished" datetime="2023-11-19T20:14:04+00:00">2023-11-19</time>
+              <time title="创建时间：2023-11-19 20:14:04" itemprop="dateCreated datePublished" datetime="2023-11-19T20:14:04+00:00">2023-11-19</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-04-06 14:34:13" itemprop="dateModified" datetime="2024-04-06T14:34:13+00:00">2024-04-06</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%85%B6%E5%AE%83/" itemprop="url" rel="index"><span itemprop="name">其它</span></a>
+                  <a href="/categories/3-%E5%85%B6%E5%AE%83/" itemprop="url" rel="index"><span itemprop="name">3.其它</span></a>
                 </span>
             </span>
 
@@ -239,17 +511,14 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="Linux"><a href="#Linux" class="headerlink" title="Linux"></a>Linux</h2><h3 id="解压缩"><a href="#解压缩" class="headerlink" title="解压缩"></a>解压缩</h3><p>zip格式：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">unzip filename.zip</span><br></pre></td></tr></table></figure>
-
-<p>tar格式：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -xvf filename.tar.xxx  <span class="comment"># 其中，xxx是gz、bz2、xz、z等后缀（1.15版之后可自动识别压缩格式）</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="磁盘"><a href="#磁盘" class="headerlink" title="磁盘"></a>磁盘</h3><p>查看磁盘空间：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">df</span> -hl</span><br></pre></td></tr></table></figure>
-
-<h2 id="Linux子系统（WSL）"><a href="#Linux子系统（WSL）" class="headerlink" title="Linux子系统（WSL）"></a>Linux子系统（WSL）</h2><p>移除子系统中的Windows环境变量（仅当次起效）:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PATH=$(<span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$PATH</span>&quot;</span> | sed -e <span class="string">&#x27;s/:\/mnt.*//g&#x27;</span>) <span class="comment"># strip out problematic Windows %PATH% imported var</span></span><br></pre></td></tr></table></figure>
+          <h2 id="linux">Linux</h2>
+<h3 id="解压缩">解压缩</h3>
+<p>zip格式： <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">unzip filename.zip</span><br></pre></td></tr></table></figure></p>
+<p>tar格式： <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -xvf filename.tar.xxx  <span class="comment"># 其中，xxx是gz、bz2、xz、z等后缀（1.15版之后可自动识别压缩格式）</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="磁盘">磁盘</h3>
+<p>查看磁盘空间： <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">df</span> -hl</span><br></pre></td></tr></table></figure></p>
+<h2 id="linux子系统wsl">Linux子系统（WSL）</h2>
+<p>移除子系统中的Windows环境变量（仅当次起效）: <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PATH=$(<span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$PATH</span>&quot;</span> | sed -e <span class="string">&#x27;s/:\/mnt.*//g&#x27;</span>) <span class="comment"># strip out problematic Windows %PATH% imported var</span></span><br></pre></td></tr></table></figure></p>
 
       
     </div>
@@ -300,7 +569,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-11-19 12:44:19" itemprop="dateModified" datetime="2023-11-19T12:44:19+00:00">2023-11-19</time>
+                <time title="修改时间：2024-04-06 14:34:13" itemprop="dateModified" datetime="2024-04-06T14:34:13+00:00">2024-04-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -308,7 +577,7 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%89%8D%E5%90%8E%E5%A4%84%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">前后处理</span></a>
+                  <a href="/categories/1-%E5%89%8D%E5%90%8E%E5%A4%84%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">1.前后处理</span></a>
                 </span>
             </span>
 
@@ -323,30 +592,30 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>早些时候，这篇文章已经被我发布在了知乎上：“<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/455592800">VTK+OCC显示CAD模型</a>”，今天将文章重新编辑，发布在Github上，主要是为了测试Hexo的用法。</p>
-<h2 id="测试环境"><a href="#测试环境" class="headerlink" title="测试环境"></a>测试环境</h2><ul>
+          <h2 id="前言">前言</h2>
+<p>早些时候，这篇文章已经被我发布在了知乎上：“<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/455592800">VTK+OCC显示CAD模型</a>”，今天将文章重新编辑，发布在Github上，主要是为了测试Hexo的用法。</p>
+<h2 id="测试环境">测试环境</h2>
+<ul>
 <li>系统：Win11</li>
 <li>IDE：Visual Studio Community 2019</li>
 <li>VTK：VTK 9.2</li>
 <li>OCC：OCCT 7.6</li>
 </ul>
-<h2 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h2><p>VTK是一款十分优秀的可视化套件，开源且功能强大，基本上可以满足有限元领域的全部可视化需求。遗憾的是，VTK不支持CAD模型（如igs、stp格式的模型）的显示。</p>
+<h2 id="正文">正文</h2>
+<p>VTK是一款十分优秀的可视化套件，开源且功能强大，基本上可以满足有限元领域的全部可视化需求。遗憾的是，VTK不支持CAD模型（如igs、stp格式的模型）的显示。</p>
 <p>在网上搜索后可以发现，在不花钱的情况下，想要显示和处理CAD模型，基本上都得使用OpenCasCade，即OCC。OCC有自己的可视化系统，也可以集成在Qt中。但对我而已，OCC自己的可视化系统还是太复杂了。</p>
 <p>好在OCC在6.8版本开发了VIS（VTK Integration Services）功能，之后的版本就可以使用VTK进行模型的可视化了。</p>
 <p>为了使用VIS功能，编译OCC的时候需要选择USE_VTK的选项，编译完成后，将生成TKIVtk、TKIVtkDraw的动态库和静态库。如果编译路径下有这两个库，说明VIS的功能是编译成功了。</p>
 <p>编写一个最小案例看看显示效果。</p>
 <p>CMakeLists.txt文件：</p>
 <figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">3.15</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">project</span>(occvtk LANGUAGES CXX)</span><br><span class="line"></span><br><span class="line"><span class="keyword">set</span>(CMAKE_CXX_STANDARD <span class="number">11</span>)</span><br><span class="line"><span class="keyword">set</span>(CMAKE_CXX_STANDARD_REQUIRED <span class="keyword">ON</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">find_package</span>(VTK REQUIRED)</span><br><span class="line"><span class="keyword">find_package</span>(OpenCASCADE REQUIRED)</span><br><span class="line"><span class="keyword">include_directories</span>(<span class="variable">$&#123;OpenCASCADE_INCLUDE_DIR&#125;</span>)</span><br><span class="line"><span class="keyword">link_directories</span>(<span class="variable">$&#123;OpenCASCADE_LIBRARY_DIR&#125;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">add_executable</span>(<span class="keyword">test</span> <span class="keyword">test</span>.cpp)</span><br><span class="line"><span class="keyword">target_link_libraries</span>(<span class="keyword">test</span></span><br><span class="line">    <span class="variable">$&#123;VTK_LIBRARIES&#125;</span></span><br><span class="line">    <span class="variable">$&#123;OpenCASCADE_LIBRARIES&#125;</span></span><br><span class="line">)</span><br><span class="line">vtk_module_autoinit(</span><br><span class="line">    TARGETS <span class="keyword">test</span></span><br><span class="line">    MODULES <span class="variable">$&#123;VTK_LIBRARIES&#125;</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-
 <p>在此CMakeLists文件中，没有写死VTK和OCC的路径，而是使用find_package命令查找。如果没有找到，可以在命令行执行cmake命令时使用-D参数将相关路径传入:</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cmake .. -DVTK_DIR:PATH=/home/me/vtk_build -DVTK_DIR -DOpenCASCADE_DIR:PATH=/home/me/occ_build</span><br></pre></td></tr></table></figure>
-
 <p>test.cpp文件:</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;STEPControl_Reader.hxx&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;Standard_Integer.hxx&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;TopoDS_Shape.hxx&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;IFSelect_ReturnStatus.hxx&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;IFSelect_PrintCount.hxx&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;IVtkTools_ShapeDataSource.hxx&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;IVtkOCC_ShapeMesher.hxx&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;IVtkTools_DisplayModeFilter.hxx&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vtkType.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vtkAutoInit.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vtkRenderWindow.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vtkActor.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vtkRenderer.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vtkRenderWindowInteractor.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vtkPolyDataMapper.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vtkInteractorStyleTrackballCamera.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="built_in">VTK_MODULE_INIT</span>(vtkRenderingOpenGL2)</span><br><span class="line"><span class="built_in">VTK_MODULE_INIT</span>(vtkInteractionStyle)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    STEPControl_Reader reader;</span><br><span class="line">    IFSelect_ReturnStatus stat = reader.<span class="built_in">ReadFile</span>(<span class="string">&quot;assembly_solid.stp&quot;</span>);</span><br><span class="line">    IFSelect_PrintCount mode = IFSelect_CountByItem;</span><br><span class="line">    Standard_Integer NbRoots = reader.<span class="built_in">NbRootsForTransfer</span>();</span><br><span class="line">    Standard_Integer num = reader.<span class="built_in">TransferRoots</span>();</span><br><span class="line">    Standard_Integer NbTrans = reader.<span class="built_in">TransferRoots</span>();</span><br><span class="line">    TopoDS_Shape result = reader.<span class="built_in">OneShape</span>();</span><br><span class="line">    <span class="comment">// TopoDS_Shape shape = reader.Shape();</span></span><br><span class="line"></span><br><span class="line">    vtkNew&lt;IVtkTools_ShapeDataSource&gt; occSource;</span><br><span class="line">    <span class="comment">//occSource-&gt;SetShape(new IVtkOCC_Shape(shape));</span></span><br><span class="line">    occSource-&gt;<span class="built_in">SetShape</span>(<span class="keyword">new</span> <span class="built_in">IVtkOCC_Shape</span>(result));</span><br><span class="line"></span><br><span class="line">    vtkNew&lt;IVtkTools_DisplayModeFilter&gt; filter;</span><br><span class="line">    filter-&gt;<span class="built_in">AddInputConnection</span>(occSource-&gt;<span class="built_in">GetOutputPort</span>());</span><br><span class="line">    filter-&gt;<span class="built_in">SetDisplayMode</span>(DM_Shading);</span><br><span class="line"></span><br><span class="line">    vtkNew&lt;vtkPolyDataMapper&gt; mapper;</span><br><span class="line">    mapper-&gt;<span class="built_in">SetInputConnection</span>(filter-&gt;<span class="built_in">GetOutputPort</span>());</span><br><span class="line"></span><br><span class="line">    vtkNew&lt;vtkActor&gt; actor;</span><br><span class="line">    actor-&gt;<span class="built_in">SetMapper</span>(mapper);</span><br><span class="line"></span><br><span class="line">    vtkNew&lt;vtkRenderer&gt; ren;</span><br><span class="line">    ren-&gt;<span class="built_in">AddActor</span>(actor);</span><br><span class="line"></span><br><span class="line">    vtkNew&lt;vtkRenderWindow&gt; renWin;</span><br><span class="line">    renWin-&gt;<span class="built_in">AddRenderer</span>(ren);</span><br><span class="line">    renWin-&gt;<span class="built_in">SetSize</span>(<span class="number">960</span>, <span class="number">800</span>);</span><br><span class="line"></span><br><span class="line">    vtkNew&lt;vtkInteractorStyleTrackballCamera&gt; istyle;</span><br><span class="line">    vtkNew&lt;vtkRenderWindowInteractor&gt; iren;</span><br><span class="line"></span><br><span class="line">    iren-&gt;<span class="built_in">SetRenderWindow</span>(renWin);</span><br><span class="line">    iren-&gt;<span class="built_in">SetInteractorStyle</span>(istyle);</span><br><span class="line"></span><br><span class="line">    renWin-&gt;<span class="built_in">Render</span>();</span><br><span class="line">    iren-&gt;<span class="built_in">Start</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <p>此测试代码将模型文件“assembly_solid.stp”写死在了源代码中，编译完成后，需要确保可执行文件可以找到模型文件。</p>
 <p>显示效果如下：</p>
-<img src="/2023/10/15/OCC-VTK%E6%98%BE%E7%A4%BACAD%E6%A8%A1%E5%9E%8B/assembly.jpg" />
+<p><img src="/2023/10/15/OCC-VTK%E6%98%BE%E7%A4%BACAD%E6%A8%A1%E5%9E%8B/assembly.jpg" /&gt;</p>
 
       
     </div>
@@ -430,20 +699,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">2</span>
+          <span class="site-state-item-count">4</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-count">5</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-count">13</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -470,7 +739,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2024</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
@@ -531,6 +800,61 @@
 
 
   
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
 
   
 

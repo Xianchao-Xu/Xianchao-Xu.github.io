@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Cholesky分解 在科学和工程计算中，经常需要求解形如 \(\mathbf{A} \mathit{x} &#x3D; \mathit{b}\) 的线性方程组， 其中 \(\mathbf{A}\) 为 \(n \times m\) 矩阵，称为系数矩阵， \(\mathit{b}\) 为 \(n\) 维列向量，称为右端向量， \(\mathit{x}\) 为待求解的 \(m\) 维列向量，称为解向量。 而科">
+<meta property="og:type" content="article">
+<meta property="og:title" content="线性方程组的解法——Cholesky分解">
+<meta property="og:url" content="http://example.com/2024/04/06/%E7%BA%BF%E6%80%A7%E6%96%B9%E7%A8%8B%E7%BB%84%E7%9A%84%E8%A7%A3%E6%B3%95%E2%80%94%E2%80%94Cholesky%E5%88%86%E8%A7%A3/index.html">
+<meta property="og:site_name" content="悬臂梁的博客">
+<meta property="og:description" content="Cholesky分解 在科学和工程计算中，经常需要求解形如 \(\mathbf{A} \mathit{x} &#x3D; \mathit{b}\) 的线性方程组， 其中 \(\mathbf{A}\) 为 \(n \times m\) 矩阵，称为系数矩阵， \(\mathit{b}\) 为 \(n\) 维列向量，称为右端向量， \(\mathit{x}\) 为待求解的 \(m\) 维列向量，称为解向量。 而科">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-04-06T18:52:11.000Z">
+<meta property="article:modified_time" content="2024-04-06T14:34:13.457Z">
+<meta property="article:author" content="xuxc">
+<meta property="article:tag" content="Cholesky分解">
+<meta property="article:tag" content="平方根法">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2024/04/06/%E7%BA%BF%E6%80%A7%E6%96%B9%E7%A8%8B%E7%BB%84%E7%9A%84%E8%A7%A3%E6%B3%95%E2%80%94%E2%80%94Cholesky%E5%88%86%E8%A7%A3/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>线性方程组的解法——Cholesky分解 | 悬臂梁的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">悬臂梁的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">但行好事 莫问前程</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/04/06/%E7%BA%BF%E6%80%A7%E6%96%B9%E7%A8%8B%E7%BB%84%E7%9A%84%E8%A7%A3%E6%B3%95%E2%80%94%E2%80%94Cholesky%E5%88%86%E8%A7%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/logo.png">
+      <meta itemprop="name" content="xuxc">
+      <meta itemprop="description" content="分享有限元理论和编程实现相关内容">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="悬臂梁的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          线性方程组的解法——Cholesky分解
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2024-04-06 18:52:11 / 修改时间：14:34:13" itemprop="dateCreated datePublished" datetime="2024-04-06T18:52:11+00:00">2024-04-06</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/2-%E6%95%B0%E5%80%BC%E8%AE%A1%E7%AE%97/" itemprop="url" rel="index"><span itemprop="name">2.数值计算</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/2-%E6%95%B0%E5%80%BC%E8%AE%A1%E7%AE%97/1-%E7%BA%BF%E6%80%A7%E6%96%B9%E7%A8%8B%E7%BB%84%E7%9A%84%E8%A7%A3%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">1.线性方程组的解法</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="cholesky分解">Cholesky分解</h2>
+<p>在科学和工程计算中，经常需要求解形如 <span class="math inline">\(\mathbf{A} \mathit{x} = \mathit{b}\)</span> 的线性方程组， 其中 <span class="math inline">\(\mathbf{A}\)</span> 为 <span class="math inline">\(n \times m\)</span> 矩阵，称为系数矩阵， <span class="math inline">\(\mathit{b}\)</span> 为 <span class="math inline">\(n\)</span> 维列向量，称为右端向量， <span class="math inline">\(\mathit{x}\)</span> 为待求解的 <span class="math inline">\(m\)</span> 维列向量，称为解向量。</p>
+<p>而科学和工程的实际计算中，经常遇到系数矩阵 <span class="math inline">\(\mathbf{A}\)</span> 为对称正定矩阵的情况。若 <span class="math display">\[
+\mathbf{A}=\begin{bmatrix}
+    a_{11} \\ a_{21} &amp; a_{22}  &amp;  &amp; 对称\\
+    a_{31} &amp; a_{32} &amp; a_{33} \\
+    \vdots &amp; \vdots &amp; \vdots &amp; \ddots \\
+    a_{n1} &amp; a_{n2} &amp; \dots &amp; a_{nn}
+\end{bmatrix}
+\]</span> 为正定阵，则有如下三角阵 <span class="math display">\[
+\mathbf{L} = \begin{bmatrix}
+    l_{11} \\
+    l_{21} &amp; l_{22} &amp; &amp; \mathbf{0}\\
+    l_{31} &amp; l_{32} &amp; l_{33} \\
+    \vdots &amp; \vdots &amp; \vdots &amp; \ddots \\
+    l_{n1} &amp; l_{n2} &amp; l_{n3} &amp; \dots &amp; l_{nn}
+\end{bmatrix} \\
+\]</span> 使 <span class="math inline">\(\mathbf{A} = \mathbf{L \cdot L^T}\)</span> 成立。若 <span class="math inline">\(\mathbf{L}\)</span> 的主对角线元素取正值，则这种分解是唯一的。</p>
+<p>将矩阵关系式 <span class="math inline">\(\mathbf{A} = \mathbf{L \cdot L^T}\)</span> 直接展开，有 <span class="math display">\[
+\begin{align*}
+    a_{11} &amp;= l_{11}^{2} \\ 
+    a_{21} &amp;= l_{21}l_{11},\quad a_{22} = l_{21}^{2}+l_{22}^{2}\\ 
+    a_{31} &amp;= l_{31}l_{11},\quad a_{32} = l_{31}l_{21}+l_{32}l_{22},\quad a_{33}=l_{31}^{2}+l_{32}^{2}+l_{33}^{2}\\
+    \dots
+\end{align*}\\
+\]</span></p>
+<p>据此可逐行求出矩阵 <span class="math inline">\(\mathbf{L}\)</span> 的元素 <span class="math inline">\(l_{11} \rightarrow l_{21} \rightarrow l_{22} \rightarrow l_{31} \rightarrow l_{32} \rightarrow \dots\)</span>，计算公式为 <span class="math display">\[
+\begin{cases}
+    l_{ij} &amp;= (a_{ij} - \sum\limits_{k=1}^{j-1}l_{ik}l_{jk}) / l_{jj}, \quad &amp; j = 1, 2, \dots, i-1 \\
+    l_{ii} &amp;= (a_{ii} - \sum\limits_{k=1}^{i-1}l_{ik}^2)^\frac{1}{2}, \quad &amp; i = 1, 2, \dots, n \\ \end{cases} \\
+\]</span></p>
+<p>基于矩阵分解式 <span class="math inline">\(\mathbf{A} = \mathbf{L \cdot L^T}\)</span>，对称正定方程组 <span class="math inline">\(\mathbf{A} \mathit{x} = \mathit{b}\)</span> 可归结为两个三角方程组 <span class="math inline">\(\mathbf{L} \mathit{y} = \mathit{b}\)</span> 和 <span class="math inline">\(\mathbf{L}^T \mathit{x} = \mathit{y}\)</span> 来求解。</p>
+<p>由 <span class="math inline">\(\mathbf{L} \mathit{y} = \mathit{b}\)</span> 即 <span class="math display">\[
+\begin{cases} l_{11}y_{1} &amp;= b_1 \\ l_{21}y_{2} + l_{22}y_{2} &amp;= b_2 \\ \dots \dots \dots \\ l_{n1}y_{1} + l_{n2}y_{2} + \dots + l_{nn}y_{n} &amp;= b_n \end{cases} \\
+\]</span> 可顺序计算出 <span class="math inline">\(y_1 \rightarrow y_2 \rightarrow \dots \rightarrow y_n\)</span> ： <span class="math display">\[
+y_i = (b_i - \sum\limits_{k=1}^{i-1}l_{ik}y_{k})/l_{ii}, \quad i = 1, 2, \dots,n \\
+\]</span></p>
+<p>而由 <span class="math inline">\(\mathbf{L}^T \mathit{x} = \mathit{y}\)</span> 即 <span class="math display">\[
+\begin{cases}
+    \begin{alignat*}{2}
+    l_{11}x_1 + l_{21}x_2 + \dots + l_{n1}x_n &amp;= y_1 \\
+    l_{22}x_2 + \dots + l_{n2}x_n &amp;= y_2 \\
+    \dots \dots \dots \\
+    l_{nn}x_n &amp;= y_n \\
+    \end{alignat*}
+\end{cases} \\
+\]</span> 可逆序求得 <span class="math inline">\(x_n \rightarrow x_{n-1} \rightarrow \dots \rightarrow x_1\)</span>： <span class="math display">\[
+x_i = (y_i - \sum\limits_{k=i+1}^nl_{ki}x_{k})/l_{ii}, \quad i = n, n-1, \dots, 1 \\
+\]</span></p>
+<p>由于矩阵分解时公式含有开方运算，所以该算法称为平方根法，又叫Cholesky分解法。</p>
+<h2 id="代码实现fortran版">代码实现（Fortran版）</h2>
+<p>根据上述公式，编写程序即可对方程进行求解：</p>
+<figure class="highlight fortran"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">subroutine</span></span> cholesky_full(n, a, y)</span><br><span class="line">    <span class="keyword">implicit</span> <span class="keyword">none</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">integer</span>, <span class="keyword">intent</span>(<span class="keyword">in</span>) :: n</span><br><span class="line">    <span class="keyword">real</span>, <span class="keyword">intent</span>(inout) :: a(n, n), y(n)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">integer</span> :: i, j, k</span><br><span class="line">    <span class="keyword">real</span> :: temp</span><br><span class="line">    </span><br><span class="line">    <span class="comment">! 分解矩阵，生成下三角阵L</span></span><br><span class="line">    <span class="comment">! 工程问题中的很多矩阵非常庞大，所以，计算过程中的数据应该直接存放在原始数组a中，</span></span><br><span class="line">    <span class="comment">! 而不是新创建一个数组</span></span><br><span class="line">    <span class="keyword">do</span> i = <span class="number">1</span>, n</span><br><span class="line">        <span class="comment">! 公式中，j的取值范围为1到j-1，此处换成1到j，可以将分解式统一起来，省去一次判断。</span></span><br><span class="line">        <span class="comment">! 因为j=i时，j循环虽然会执行错误的操作、生成错误的a(i,j)结果，</span></span><br><span class="line">        <span class="comment">! 但a(i,j)马上就会被最外层的i循环生成的正确数据替换</span></span><br><span class="line">        <span class="keyword">do</span> j = <span class="number">1</span>, i</span><br><span class="line">            temp = a(i, j)</span><br><span class="line">            <span class="keyword">do</span> k = <span class="number">1</span>, j-<span class="number">1</span></span><br><span class="line">                temp = temp - a(i, k) * a(j, k)</span><br><span class="line">            <span class="keyword">end</span> <span class="keyword">do</span></span><br><span class="line">            a(i, j) = temp / a(j, j)</span><br><span class="line">            <span class="comment">! a(j, i) = 0.  ! 对角线上方d的元素赋0，可有可无</span></span><br><span class="line">        <span class="keyword">end</span> <span class="keyword">do</span></span><br><span class="line">        a(i, i) = <span class="built_in">sqrt</span>(temp)</span><br><span class="line">    <span class="keyword">end</span> <span class="keyword">do</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">! 根据Ly=b求解出y</span></span><br><span class="line">    <span class="keyword">do</span> i = <span class="number">1</span>, n</span><br><span class="line">        temp = y(i)</span><br><span class="line">        <span class="keyword">do</span> j = <span class="number">1</span>, i-<span class="number">1</span></span><br><span class="line">            temp = temp - a(i, j) * y(j)</span><br><span class="line">        <span class="keyword">end</span> <span class="keyword">do</span></span><br><span class="line">        y(i) = temp / a(i, i)</span><br><span class="line">    <span class="keyword">end</span> <span class="keyword">do</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">! 求解出x</span></span><br><span class="line">    <span class="keyword">do</span> i = n, <span class="number">1</span>, -<span class="number">1</span></span><br><span class="line">        temp = y(i) / a(i, i)</span><br><span class="line">        y(i) = temp</span><br><span class="line">        <span class="comment">! 公式中k的范围为i+1到n，此处为1到i-1，因为下方a(i,k)的下标和公式中交换了顺序</span></span><br><span class="line">        <span class="keyword">do</span> k = <span class="number">1</span>, i-<span class="number">1</span></span><br><span class="line">            y(k) = y(k) - temp * a(i, k)</span><br><span class="line">        <span class="keyword">end</span> <span class="keyword">do</span></span><br><span class="line">    <span class="keyword">end</span> <span class="keyword">do</span></span><br><span class="line"><span class="keyword">end</span> <span class="function"><span class="keyword">subroutine</span></span></span><br></pre></td></tr></table></figure>
+<p>以上代码的Cholesky分解部分与前文公式基本上一致，很好理解，但引入了一个临时变量temp，用于存储数据。 而如果我们将j、k两层循环交换一下位置，再稍微调整一下循环计数器的取值范围，就可以不借助临时变量直接完成分解操作。 代码如下： <figure class="highlight fortran"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">do</span> i = <span class="number">1</span>, n</span><br><span class="line">    <span class="keyword">do</span> k = <span class="number">1</span>, i - <span class="number">1</span></span><br><span class="line">        a(i, k) = a(i, k) / a(k, k)</span><br><span class="line">        <span class="keyword">do</span> j = k + <span class="number">1</span>, i</span><br><span class="line">            a(i, j) = a(i, j) - a(i, k) * a(j, k)</span><br><span class="line">        <span class="keyword">end</span> <span class="keyword">do</span></span><br><span class="line">    <span class="keyword">end</span> <span class="keyword">do</span></span><br><span class="line">    a(i, i) = <span class="built_in">sqrt</span>(a(i, i))</span><br><span class="line"><span class="keyword">end</span> <span class="keyword">do</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="参考文献">参考文献</h2>
+<p>[1].王能超. 高等学校教材, 数值分析简明教程, （第2版）[M]. 2003.</p>
+<p>[2].吴建平, 王正华, 李晓梅. 稀疏线性方程组的高效求解与并行计算[M]. 湖南科学技术出版社, 2004.</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Cholesky%E5%88%86%E8%A7%A3/" rel="tag"># Cholesky分解</a>
+              <a href="/tags/%E5%B9%B3%E6%96%B9%E6%A0%B9%E6%B3%95/" rel="tag"># 平方根法</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/11/19/%E5%90%84%E7%A7%8D%E5%91%BD%E4%BB%A4%E7%9A%84%E7%AC%94%E8%AE%B0/" rel="prev" title="各种命令的笔记">
+      <i class="fa fa-chevron-left"></i> 各种命令的笔记
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/04/06/%E7%89%B9%E5%BE%81%E9%97%AE%E9%A2%98%E7%9A%84%E8%A7%A3%E6%B3%95%E2%80%94%E2%80%94%E5%90%91%E9%87%8F%E8%BF%AD%E4%BB%A3%E6%B3%95/" rel="next" title="特征问题的解法——向量迭代法（一）">
+      特征问题的解法——向量迭代法（一） <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#cholesky%E5%88%86%E8%A7%A3"><span class="nav-number">1.</span> <span class="nav-text">Cholesky分解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0fortran%E7%89%88"><span class="nav-number">2.</span> <span class="nav-text">代码实现（Fortran版）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="nav-number">3.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="xuxc"
+      src="/images/logo.png">
+  <p class="site-author-name" itemprop="name">xuxc</p>
+  <div class="site-description" itemprop="description">分享有限元理论和编程实现相关内容</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">4</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">xuxc</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>

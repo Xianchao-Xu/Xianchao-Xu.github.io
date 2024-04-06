@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 6.3.0">
+<meta name="generator" content="Hexo 7.1.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -20,15 +20,15 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="Linux解压缩zip格式： 1unzip filename.zip  tar格式： 1tar -xvf filename.tar.xxx  # 其中，xxx是gz、bz2、xz、z等后缀（1.15版之后可自动识别压缩格式）  磁盘查看磁盘空间： 1df -hl  Linux子系统（WSL）移除子系统中的Windows环境变量（仅当次起效）: 1PATH&#x3D;$(echo &quot;$PATH&amp;qu">
+  <meta name="description" content="Linux 解压缩 zip格式： 1unzip filename.zip tar格式： 1tar -xvf filename.tar.xxx  # 其中，xxx是gz、bz2、xz、z等后缀（1.15版之后可自动识别压缩格式） 磁盘 查看磁盘空间： 1df -hl Linux子系统（WSL） 移除子系统中的Windows环境变量（仅当次起效）: 1PATH&#x3D;$(echo &quot;$PATH&amp;q">
 <meta property="og:type" content="article">
 <meta property="og:title" content="各种命令的笔记">
 <meta property="og:url" content="http://example.com/2023/11/19/%E5%90%84%E7%A7%8D%E5%91%BD%E4%BB%A4%E7%9A%84%E7%AC%94%E8%AE%B0/index.html">
 <meta property="og:site_name" content="悬臂梁的博客">
-<meta property="og:description" content="Linux解压缩zip格式： 1unzip filename.zip  tar格式： 1tar -xvf filename.tar.xxx  # 其中，xxx是gz、bz2、xz、z等后缀（1.15版之后可自动识别压缩格式）  磁盘查看磁盘空间： 1df -hl  Linux子系统（WSL）移除子系统中的Windows环境变量（仅当次起效）: 1PATH&#x3D;$(echo &quot;$PATH&amp;qu">
+<meta property="og:description" content="Linux 解压缩 zip格式： 1unzip filename.zip tar格式： 1tar -xvf filename.tar.xxx  # 其中，xxx是gz、bz2、xz、z等后缀（1.15版之后可自动识别压缩格式） 磁盘 查看磁盘空间： 1df -hl Linux子系统（WSL） 移除子系统中的Windows环境变量（仅当次起效）: 1PATH&#x3D;$(echo &quot;$PATH&amp;q">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-11-19T20:14:04.000Z">
-<meta property="article:modified_time" content="2023-11-19T12:44:19.569Z">
+<meta property="article:modified_time" content="2024-04-06T14:34:13.457Z">
 <meta property="article:author" content="xuxc">
 <meta property="article:tag" content="命令行">
 <meta property="article:tag" content="命令">
@@ -218,17 +218,23 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2023-11-19 20:14:04 / 修改时间：12:44:19" itemprop="dateCreated datePublished" datetime="2023-11-19T20:14:04+00:00">2023-11-19</time>
+              <time title="创建时间：2023-11-19 20:14:04" itemprop="dateCreated datePublished" datetime="2023-11-19T20:14:04+00:00">2023-11-19</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-04-06 14:34:13" itemprop="dateModified" datetime="2024-04-06T14:34:13+00:00">2024-04-06</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%85%B6%E5%AE%83/" itemprop="url" rel="index"><span itemprop="name">其它</span></a>
+                  <a href="/categories/3-%E5%85%B6%E5%AE%83/" itemprop="url" rel="index"><span itemprop="name">3.其它</span></a>
                 </span>
             </span>
 
@@ -243,17 +249,14 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="Linux"><a href="#Linux" class="headerlink" title="Linux"></a>Linux</h2><h3 id="解压缩"><a href="#解压缩" class="headerlink" title="解压缩"></a>解压缩</h3><p>zip格式：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">unzip filename.zip</span><br></pre></td></tr></table></figure>
-
-<p>tar格式：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -xvf filename.tar.xxx  <span class="comment"># 其中，xxx是gz、bz2、xz、z等后缀（1.15版之后可自动识别压缩格式）</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="磁盘"><a href="#磁盘" class="headerlink" title="磁盘"></a>磁盘</h3><p>查看磁盘空间：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">df</span> -hl</span><br></pre></td></tr></table></figure>
-
-<h2 id="Linux子系统（WSL）"><a href="#Linux子系统（WSL）" class="headerlink" title="Linux子系统（WSL）"></a>Linux子系统（WSL）</h2><p>移除子系统中的Windows环境变量（仅当次起效）:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PATH=$(<span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$PATH</span>&quot;</span> | sed -e <span class="string">&#x27;s/:\/mnt.*//g&#x27;</span>) <span class="comment"># strip out problematic Windows %PATH% imported var</span></span><br></pre></td></tr></table></figure>
+        <h2 id="linux">Linux</h2>
+<h3 id="解压缩">解压缩</h3>
+<p>zip格式： <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">unzip filename.zip</span><br></pre></td></tr></table></figure></p>
+<p>tar格式： <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -xvf filename.tar.xxx  <span class="comment"># 其中，xxx是gz、bz2、xz、z等后缀（1.15版之后可自动识别压缩格式）</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="磁盘">磁盘</h3>
+<p>查看磁盘空间： <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">df</span> -hl</span><br></pre></td></tr></table></figure></p>
+<h2 id="linux子系统wsl">Linux子系统（WSL）</h2>
+<p>移除子系统中的Windows环境变量（仅当次起效）: <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PATH=$(<span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$PATH</span>&quot;</span> | sed -e <span class="string">&#x27;s/:\/mnt.*//g&#x27;</span>) <span class="comment"># strip out problematic Windows %PATH% imported var</span></span><br></pre></td></tr></table></figure></p>
 
     </div>
 
@@ -276,7 +279,10 @@
     <a href="/2023/10/15/OCC-VTK%E6%98%BE%E7%A4%BACAD%E6%A8%A1%E5%9E%8B/" rel="prev" title="OCC+VTK显示CAD模型">
       <i class="fa fa-chevron-left"></i> OCC+VTK显示CAD模型
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2024/04/06/%E7%BA%BF%E6%80%A7%E6%96%B9%E7%A8%8B%E7%BB%84%E7%9A%84%E8%A7%A3%E6%B3%95%E2%80%94%E2%80%94Cholesky%E5%88%86%E8%A7%A3/" rel="next" title="线性方程组的解法——Cholesky分解">
+      线性方程组的解法——Cholesky分解 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -335,7 +341,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux"><span class="nav-number">1.</span> <span class="nav-text">Linux</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E5%8E%8B%E7%BC%A9"><span class="nav-number">1.1.</span> <span class="nav-text">解压缩</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A3%81%E7%9B%98"><span class="nav-number">1.2.</span> <span class="nav-text">磁盘</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux%E5%AD%90%E7%B3%BB%E7%BB%9F%EF%BC%88WSL%EF%BC%89"><span class="nav-number">2.</span> <span class="nav-text">Linux子系统（WSL）</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#linux"><span class="nav-number">1.</span> <span class="nav-text">Linux</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E5%8E%8B%E7%BC%A9"><span class="nav-number">1.1.</span> <span class="nav-text">解压缩</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A3%81%E7%9B%98"><span class="nav-number">1.2.</span> <span class="nav-text">磁盘</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#linux%E5%AD%90%E7%B3%BB%E7%BB%9Fwsl"><span class="nav-number">2.</span> <span class="nav-text">Linux子系统（WSL）</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -351,20 +357,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">2</span>
+          <span class="site-state-item-count">4</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-count">5</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-count">13</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -391,7 +397,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2024</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
@@ -450,6 +456,8 @@
 
 
 
+
+  
 
   
 
