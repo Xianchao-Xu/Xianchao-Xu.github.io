@@ -1,6 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>各种命令的笔记</title>
+    <url>/2023/11/19/%E5%90%84%E7%A7%8D%E5%91%BD%E4%BB%A4%E7%9A%84%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<h2 id="linux">Linux</h2>
+<h3 id="解压缩">解压缩</h3>
+<p>zip格式： <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">unzip filename.zip</span><br></pre></td></tr></table></figure></p>
+<p>tar格式： <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar -xvf filename.tar.xxx  <span class="comment"># 其中，xxx是gz、bz2、xz、z等后缀（1.15版之后可自动识别压缩格式）</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="磁盘">磁盘</h3>
+<p>查看磁盘空间： <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">df</span> -hl</span><br></pre></td></tr></table></figure></p>
+<h2 id="linux子系统wsl">Linux子系统（WSL）</h2>
+<p>移除子系统中的Windows环境变量（仅当次起效）: <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">PATH=$(<span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$PATH</span>&quot;</span> | sed -e <span class="string">&#x27;s/:\/mnt.*//g&#x27;</span>) <span class="comment"># strip out problematic Windows %PATH% imported var</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="hexo">Hexo</h2>
+<p>新建文章 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo new [layout] &lt;title&gt;</span><br></pre></td></tr></table></figure></p>
+<p>清理缓存和生成的静态文件；生成静态文件；启动服务，端口为5000</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo clean; hexo g; hexo s -p 5000</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>3.其它</category>
+      </categories>
+      <tags>
+        <tag>命令行</tag>
+        <tag>命令</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>OCC+VTK显示CAD模型</title>
     <url>/2023/10/15/OCC-VTK%E6%98%BE%E7%A4%BACAD%E6%A8%A1%E5%9E%8B/</url>
     <content><![CDATA[<h2 id="前言">前言</h2>
@@ -35,26 +59,6 @@
         <tag>OCC</tag>
         <tag>VTK</tag>
         <tag>可视化</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>各种命令的笔记</title>
-    <url>/2023/11/19/%E5%90%84%E7%A7%8D%E5%91%BD%E4%BB%A4%E7%9A%84%E7%AC%94%E8%AE%B0/</url>
-    <content><![CDATA[<h2 id="linux">Linux</h2>
-<h3 id="解压缩">解压缩</h3>
-<p>zip格式： <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">unzip filename.zip</span><br></pre></td></tr></table></figure></p>
-<p>tar格式： <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar -xvf filename.tar.xxx  <span class="comment"># 其中，xxx是gz、bz2、xz、z等后缀（1.15版之后可自动识别压缩格式）</span></span><br></pre></td></tr></table></figure></p>
-<h3 id="磁盘">磁盘</h3>
-<p>查看磁盘空间： <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">df</span> -hl</span><br></pre></td></tr></table></figure></p>
-<h2 id="linux子系统wsl">Linux子系统（WSL）</h2>
-<p>移除子系统中的Windows环境变量（仅当次起效）: <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">PATH=$(<span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$PATH</span>&quot;</span> | sed -e <span class="string">&#x27;s/:\/mnt.*//g&#x27;</span>) <span class="comment"># strip out problematic Windows %PATH% imported var</span></span><br></pre></td></tr></table></figure></p>
-]]></content>
-      <categories>
-        <category>3.其它</category>
-      </categories>
-      <tags>
-        <tag>命令行</tag>
-        <tag>命令</tag>
       </tags>
   </entry>
   <entry>
@@ -169,6 +173,65 @@ p^{(r)}(\lambda^{(r)}) = {\rm{det}(\mathbf{K}^{(r)} - \lambda^{(r)}\mathbf{M}^{(
 <h2 id="参考文献">参考文献</h2>
 <p>[1]. Bathe K J. Finite element procedures[M]. Klaus-Jurgen Bathe, 2006.</p>
 <p>[2]. 史蒂文・J.利昂著STEVENJ.LEON.线性代数[M].机械工业出版社,2015.</p>
+]]></content>
+      <categories>
+        <category>2.数值计算</category>
+        <category>3.特征问题</category>
+      </categories>
+      <tags>
+        <tag>特征值计算</tag>
+        <tag>模态计算</tag>
+        <tag>幂法</tag>
+        <tag>逆幂法</tag>
+        <tag>向量迭代法</tag>
+        <tag>逆迭代法</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>特征问题的解法——向量迭代法(2)</title>
+    <url>/2024/04/14/%E7%89%B9%E5%BE%81%E9%97%AE%E9%A2%98%E7%9A%84%E8%A7%A3%E6%B3%95%E2%80%94%E2%80%94%E5%90%91%E9%87%8F%E8%BF%AD%E4%BB%A3%E6%B3%952/</url>
+    <content><![CDATA[<h2 id="前言">前言</h2>
+<p><a href="https://xianchao-xu.github.io/2024/04/06/%E7%89%B9%E5%BE%81%E9%97%AE%E9%A2%98%E7%9A%84%E8%A7%A3%E6%B3%95%E2%80%94%E2%80%94%E5%90%91%E9%87%8F%E8%BF%AD%E4%BB%A3%E6%B3%951/">上一篇文章中</a>介绍了计算特征值的逆迭代算法，我们知道基本逆迭代算法收敛于 <span class="math inline">\(\lambda_1\)</span> 和 <span class="math inline">\(\Phi_1\)</span>，基本正迭代算法收敛于 <span class="math inline">\(\lambda_n\)</span> 和 <span class="math inline">\(\Phi_n\)</span>。现在假定我们已经计算出了其中一个特征值对，如 <span class="math inline">\((\lambda_k, \Phi_k)\)</span>，该怎么求解出其它的特征值对呢？</p>
+<p>为了确保迭代过程不再收敛于 <span class="math inline">\((\lambda_k, \Phi_k)\)</span>，需要收缩 (Deflation)矩阵或迭代向量。</p>
+<h2 id="收缩">收缩</h2>
+<h3 id="矩阵收缩">矩阵收缩</h3>
+<p>矩阵收缩的基本思想是，求一个正交矩阵 <span class="math inline">\(\mathbf{H}\)</span>，使得 <span class="math inline">\(\mathbf{HKH^{-1}}\)</span> 为一个形如 <span class="math display">\[
+\left[ 
+    \begin{array}{c|cc}
+        \lambda_1 &amp; 0 &amp; \cdots &amp; 0 \\
+        \hline
+        0 &amp; \\
+        \vdots &amp; &amp; \mathbf{K_1}\\
+        0
+    \end{array} \tag{1}
+\right]
+\]</span> 的矩阵。由于 <span class="math inline">\(\mathbf{K}\)</span> 和 <span class="math inline">\(\mathbf{HKH^{-1}}\)</span> 是相似的，故它们有相同的特征多项式。因此，若 <span class="math inline">\(\mathbf{HKH^{-1}}\)</span> 形如 (1)，则 <span class="math display">\[
+\rm{det} (\mathbf{K - \lambda I}) = \rm{det} (\mathbf{HKH^{-1} -\lambda I}) = \mathbf{\lambda_1 - \lambda} \rm{det} (\mathbf{K_1 - \lambda I})
+\]</span> 由此可得，<span class="math inline">\(\mathbf{K}\)</span> 的其余 <span class="math inline">\(n-1\)</span> 个特征值是 <span class="math inline">\(\mathbf{K_1}\)</span> 的特征值。</p>
+<p>而一旦使用 <span class="math inline">\(\mathbf{K_1}\)</span> 算出了第二个所求特征对后，就可以对 <span class="math inline">\(\mathbf{K_1}\)</span> 重复该收缩过程，直到算出所有需要求解的特征值和特征向量。</p>
+<p>应指出，矩阵 <span class="math inline">\(\mathbf{H}\)</span> 不是唯一的，因此可以使用各种方法构建一个适当的变换矩阵。 另外，由于刚度矩阵 <span class="math inline">\(\mathbf{K}\)</span> 是带状的，所以，该变换不应破坏其带状结构。</p>
+<h3 id="向量收缩与gram-schmidt方法">向量收缩与Gram-Schmidt方法</h3>
+<p>为了得到其它特征对，我们也可以选择不收缩矩阵，而是收缩迭代向量。</p>
+<p>向量收缩的基本思想是，逆迭代或正迭代过程中，为了使迭代向量收敛于所求的特征向量，该迭代向量应不与特征向量正交。 反之，如果迭代向量正交于已计算出的特征向量，那么我们就消除了迭代向量收敛于这些特征向量的可能性， 即，迭代向量将收敛于其它特征向量。</p>
+<p>Gram-Schmidt方法是一个被广泛应用的向量正交化方法。该方法可用于求解广义特征值问题 <span class="math inline">\(\mathbf{K \Phi = \lambda M \Phi}\)</span>。</p>
+<p>假设我们已经利用逆迭代算法求解出特征向量 <span class="math inline">\(\Phi_1,\Phi_2,\cdots,\Phi_m\)</span>，我们需要 <span class="math inline">\(\mathbf{x_1}\)</span> 与这些特征向量 <span class="math inline">\(\mathbf{M}\)</span> 正交化。</p>
+<p>在Gram-Schmidt正交化中，特征向量 <span class="math inline">\(\Phi_1,\Phi_2,\cdots,\Phi_m\)</span> 的 <span class="math inline">\(\mathbf{M}\)</span> 正交向量 <span class="math inline">\(\mathbf{\widetilde{x}_1}\)</span> 的计算方法为： <span class="math display">\[
+\begin{align}
+    \mathbf{\widetilde{x}_1} &amp;= \mathbf{x}_1 - \sum_{i-1}^{m}{\alpha_i \Phi_i} \tag{2}  \\
+    \alpha_i &amp;= \mathbf{\Phi_i^T M x_1}; \quad i=1,\cdots,m \tag{3} \\
+\end{align}
+\]</span></p>
+<p>在逆迭代算法中，我们现在就可以使用 <span class="math inline">\(\mathbf{\widetilde{x}_1}\)</span> 作为初始迭代向量。然后，只要 <span class="math inline">\(\mathbf{x_1^T M \Phi_{m+1}} \neq 0\)</span>，迭代向量就将收敛于 <span class="math inline">\(\Phi_{m+1}\)</span> 和 <span class="math inline">\({\lambda_{m+1}}\)</span>。</p>
+<h2 id="代码实现和测试">代码实现和测试</h2>
+<p>在<a href="https://xianchao-xu.github.io/2024/04/06/%E7%89%B9%E5%BE%81%E9%97%AE%E9%A2%98%E7%9A%84%E8%A7%A3%E6%B3%95%E2%80%94%E2%80%94%E5%90%91%E9%87%8F%E8%BF%AD%E4%BB%A3%E6%B3%951/">上一篇文章中</a>Python代码的基础上进行修改，实现向量收缩的代码。</p>
+<h3 id="代码实现和测试-1">代码实现和测试</h3>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> scipy <span class="keyword">as</span> sp</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">inverse_iteration_method1</span>(<span class="params">k: np.matrix, m: np.matrix</span>):</span><br><span class="line">    n = k.shape[<span class="number">0</span>]</span><br><span class="line">    eig_val = np.zeros(n)</span><br><span class="line">    eig_vec = np.matrix(np.zeros((n, n)))</span><br><span class="line"></span><br><span class="line">    eps = <span class="number">1e-6</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n):</span><br><span class="line">        x = np.matrix(np.ones(n).reshape(n, <span class="number">1</span>))</span><br><span class="line">        x_pre = x</span><br><span class="line">        <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">            <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(i):</span><br><span class="line">                alpha = eig_vec[:, j].transpose() * m * x</span><br><span class="line">                x -= alpha[<span class="number">0</span>, <span class="number">0</span>] * eig_vec[:, j]</span><br><span class="line">            x = np.linalg.solve(k, m * x)</span><br><span class="line">            norm = x.transpose() * m * x</span><br><span class="line">            x /= np.sqrt(norm)</span><br><span class="line">            <span class="keyword">if</span> np.<span class="built_in">all</span>(<span class="built_in">abs</span>(x - x_pre) &lt; eps):</span><br><span class="line">                eig_val[i] = <span class="number">1</span>/np.sqrt(norm[<span class="number">0</span>, <span class="number">0</span>])</span><br><span class="line">                eig_vec[:, i] = x</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">            x_pre = x</span><br><span class="line">    <span class="keyword">return</span> eig_val, eig_vec</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">inverse_iteration_method2</span>(<span class="params">k: np.matrix, m: np.matrix</span>):</span><br><span class="line">    n = k.shape[<span class="number">0</span>]</span><br><span class="line">    eig_val = np.zeros(n)</span><br><span class="line">    eig_vec = np.matrix(np.zeros((n, n)))</span><br><span class="line"></span><br><span class="line">    eps = <span class="number">1e-6</span></span><br><span class="line">    rho_pre = <span class="number">0.0</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n):</span><br><span class="line">        x = np.matrix(np.ones(n).reshape(n, <span class="number">1</span>))</span><br><span class="line">        y = m * x</span><br><span class="line">        <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">            x = np.linalg.solve(k, y)</span><br><span class="line">            <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(i):</span><br><span class="line">                alpha = eig_vec[:, j].transpose() * m * x</span><br><span class="line">                x -= alpha[<span class="number">0</span>, <span class="number">0</span>] * eig_vec[:, j]</span><br><span class="line">            y_bar = m * x</span><br><span class="line">            rho = x.transpose() * y / (x.transpose() * y_bar)</span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">abs</span>(rho - rho_pre) / rho &lt; eps:</span><br><span class="line">                eig_val[i] = rho[<span class="number">0</span>, <span class="number">0</span>]</span><br><span class="line">                eig_vec[:, i] = x / np.sqrt(x.transpose() * y_bar)</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">            y = y_bar / np.sqrt(x.transpose() * y_bar)</span><br><span class="line">            rho_pre = rho</span><br><span class="line">    <span class="keyword">return</span> eig_val, eig_vec</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">test</span>():</span><br><span class="line">    k = np.matrix(np.array([</span><br><span class="line">        [<span class="number">5</span>, -<span class="number">4</span>, <span class="number">1</span>, <span class="number">0</span>],</span><br><span class="line">        [-<span class="number">4</span>, <span class="number">6</span>, -<span class="number">4</span>, <span class="number">1</span>],</span><br><span class="line">        [<span class="number">1</span>, -<span class="number">4</span>, <span class="number">6</span>, -<span class="number">4</span>],</span><br><span class="line">        [<span class="number">0</span>, <span class="number">1</span>, -<span class="number">4</span>, <span class="number">5</span>]</span><br><span class="line">    ]))</span><br><span class="line">    m = np.matrix(np.array([</span><br><span class="line">        [<span class="number">2</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>],</span><br><span class="line">        [<span class="number">0</span>, <span class="number">2</span>, <span class="number">0</span>, <span class="number">0</span>],</span><br><span class="line">        [<span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>],</span><br><span class="line">        [<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>]</span><br><span class="line">    ]))</span><br><span class="line">    n = k.shape[<span class="number">0</span>]</span><br><span class="line">    eig_vals, eig_vecs = sp.linalg.eig(k, m)[:<span class="number">2</span>]</span><br><span class="line">    eig_vals = eig_vals.real</span><br><span class="line">    argsort = np.argsort(eig_vals)</span><br><span class="line">    eig_vals = [eig_vals[argsort[i]] <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n)]</span><br><span class="line">    eig_vecs_copy = eig_vecs.copy()</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n):</span><br><span class="line">        eig_vecs[:, i] = eig_vecs_copy[:, argsort[i]]</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;SciPy库：&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(eig_vals)</span><br><span class="line">    <span class="built_in">print</span>(eig_vecs)</span><br><span class="line"></span><br><span class="line">    eig_vals, eig_vecs = inverse_iteration_method1(k, m)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;方法1：&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;特征值：\n<span class="subst">&#123;eig_vals&#125;</span>&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;特征向量：\n<span class="subst">&#123;eig_vecs&#125;</span>&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    eig_vals, eig_vecs = inverse_iteration_method2(k, m)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;方法2：&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;特征值：\n<span class="subst">&#123;eig_vals&#125;</span>&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;特征向量：\n<span class="subst">&#123;eig_vecs&#125;</span>&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>程序输出如下： <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">SciPy库：</span><br><span class="line">[0.09653732854936428, 1.3914654511583402, 4.373549554582955, 10.638447665709336]</span><br><span class="line">[[-0.38576651  0.50215561 -0.55097093  0.11195372]</span><br><span class="line"> [-0.61138815  0.14033458  0.52342732 -0.26606756]</span><br><span class="line"> [-0.59120182 -0.55197537  0.02916661  0.75798869]</span><br><span class="line"> [-0.35758794 -0.65074507 -0.64931054 -0.58491672]]</span><br><span class="line">方法1：</span><br><span class="line">特征值：</span><br><span class="line">[ 0.09653733  1.39146545  4.37354955 10.63844769]</span><br><span class="line">特征向量：</span><br><span class="line">[[ 0.31262955  0.44526604  0.43866944 -0.10756245]</span><br><span class="line"> [ 0.49547586  0.12443555 -0.41674032  0.25563076]</span><br><span class="line"> [ 0.4791166  -0.48944215 -0.02322167 -0.72825456]</span><br><span class="line"> [ 0.28979328 -0.5770219   0.51696616  0.56197132]]</span><br><span class="line">方法2：</span><br><span class="line">特征值：</span><br><span class="line">[ 0.09653733  1.39146547  4.37354974 10.63844707]</span><br><span class="line">特征向量：</span><br><span class="line">[[ 0.31263514  0.44529746  0.43861285 -0.10764853]</span><br><span class="line"> [ 0.49547613  0.12439816 -0.41670087  0.25571251]</span><br><span class="line"> [ 0.47911154 -0.48944852 -0.023328   -0.72825001]</span><br><span class="line"> [ 0.28978869 -0.57698412  0.51712097  0.56186986]]</span><br></pre></td></tr></table></figure></p>
+<p>可以看出，程序正确计算出了矩阵的全部特征值和特征向量。（特征向量因归一化方式不同，存在数字上的差异。若以相同的规则缩放，结果将相同）</p>
+<h2 id="参考文献">参考文献</h2>
+<p>[1]. Bathe K J. Finite element procedures[M]. Klaus-Jurgen Bathe, 2006.</p>
+<p>[2]. 史蒂文・J.利昂著STEVENJ.LEON.线性代数[M].机械工业出版社,2015.</p>
+<p>[3]. 朱伯芳.有限单元法原理与应用-第3版[M].中国水利水电出版社,2009.</p>
 ]]></content>
       <categories>
         <category>2.数值计算</category>
